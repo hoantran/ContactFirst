@@ -12,20 +12,35 @@ import Contacts
 import ContactsUI
 
 
-class ContactViewController: UIViewController, CNContactPickerDelegate {
+class ContactViewController: UIViewController, CNContactPickerDelegate, CNContactViewControllerDelegate {
 
   override func viewDidLoad() {
     super.viewDidLoad()
     
     view.backgroundColor = UIColor.cyan
-    navigationItem.title = "Exploring Contacts"
+    navigationItem.title = "Contacts"
     
     let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addButtonTapped) )
     navigationItem.setRightBarButton(addButton, animated: true)
+    
+    let contactList = UIBarButtonItem(title: "List", style: .plain, target: self, action: #selector(contactListTapped))
+    navigationItem.setLeftBarButton(contactList, animated: true)
+  }
+
+  @objc func addButtonTapped() {
+    let con = CNContact()
+    let vc = CNContactViewController(forNewContact: con)
+    vc.delegate = self
+    _ = self.navigationController?.pushViewController(vc, animated: true)
+  }
+
+  func contactViewController(_ viewController: CNContactViewController, didCompleteWith contact: CNContact?) {
+    if let contact = contact {
+      print(contact)
+    }
   }
   
-  @objc func addButtonTapped() {
-    print("tapped")
+  @objc func contactListTapped() {
     let controller = CNContactPickerViewController()
     controller.delegate = self
     navigationController?.present(controller, animated: true, completion: nil)
